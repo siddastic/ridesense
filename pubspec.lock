@@ -147,6 +147,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  master_validator:
+    dependency: "direct main"
+    description:
+      name: master_validator
+      sha256: "2861bfe25956725a80b1094515aad8a06bd46815631ba1b480a8d9fab796608e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   matcher:
     dependency: transitive
     description:
