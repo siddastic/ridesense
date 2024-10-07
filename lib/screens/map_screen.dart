@@ -1,11 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:ridesense/model/location_result.dart';
 import 'package:ridesense/services/location.dart';
 import 'package:ridesense/widgets/input.dart';
+import 'package:ridesense/widgets/map_type_selector.dart';
 
 class MapScreen extends StatefulWidget {
   static const routeName = '/map';
@@ -19,72 +21,72 @@ class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  // default camera position
   static const CameraPosition _newDelhi = CameraPosition(
     target: LatLng(28.6139, 77.2090),
     zoom: 14.4746,
   );
 
-  LatLng? _currentUserLocation; // Variable to store the current user location
-  final Set<Marker> _markers = {}; // To store map markers
+  LatLng? _currentUserLocation;
+  final Set<Marker> _markers = {};
   bool isLocationLoading = false;
+  MapType _mapType = MapType.normal;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      LatLng location = ModalRoute.of(context)!.settings.arguments as LatLng;
-      final GoogleMapController controller = await _controller.future;
-      controller.animateCamera(CameraUpdate.newLatLng(location));
-
-      // Add search result marker to the map
-      _markers.add(Marker(
-        markerId: const MarkerId('search_result_marker'),
-        position: location,
-      ));
-      setState(() {});
+      LocationResult result =
+          ModalRoute.of(context)!.settings.arguments as LocationResult;
+      _animateCameraToLocation(result.location);
+      _addMarker(result.location, 'search_result_marker');
     });
   }
 
-  // Method to fetch and show current user location using LocationService
   Future<void> _getCurrentLocation() async {
     setState(() {
       isLocationLoading = true;
     });
     try {
-      // Get current position using LocationService
       Position position = await LocationService.determinePosition();
       LatLng currentLatLng = LatLng(position.latitude, position.longitude);
 
-      setState(() {
-        _currentUserLocation = currentLatLng;
-
-        // Move the camera to the current location
-        _controller.future.then((controller) {
-          controller
-              .animateCamera(CameraUpdate.newLatLng(_currentUserLocation!));
-        });
-
-        // Add a blue dot marker for the current location
-        _markers.add(Marker(
-          markerId: const MarkerId('current_location_marker'),
-          position: _currentUserLocation!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-        ));
-      });
+      _animateCameraToLocation(currentLatLng);
+      _addMarker(
+          currentLatLng, 'current_location_marker', BitmapDescriptor.hueBlue);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      _showErrorSnackBar(e.toString());
     }
     setState(() {
       isLocationLoading = false;
     });
   }
 
+  void _animateCameraToLocation(LatLng location) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newLatLng(location));
+  }
+
+  void _addMarker(LatLng position, String markerId,
+      [double hue = BitmapDescriptor.hueRed]) {
+    _markers.add(Marker(
+      markerId: MarkerId(markerId),
+      position: position,
+      icon: BitmapDescriptor.defaultMarkerWithHue(hue),
+    ));
+    setState(() {});
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    LatLng searchResult = ModalRoute.of(context)!.settings.arguments as LatLng;
+    LocationResult searchResult =
+        ModalRoute.of(context)!.settings.arguments as LocationResult;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search Result'),
@@ -93,7 +95,7 @@ class _MapScreenState extends State<MapScreen> {
           preferredSize: const Size.fromHeight(60),
           child: Input(
             prefixIcon: const Icon(Icons.location_on),
-            controller: TextEditingController(text: searchResult.toString()),
+            controller: TextEditingController(text: searchResult.name),
             readOnly: true,
             padding: const EdgeInsets.all(10),
           ),
@@ -103,7 +105,8 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           Expanded(
             child: GoogleMap(
-              mapType: MapType.hybrid,
+              zoomControlsEnabled: false,
+              mapType: _mapType,
               initialCameraPosition: _newDelhi,
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
@@ -113,18 +116,27 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: MapTypeSelector(
+        currentMapType: _mapType,
+        onMapTypeChanged: (MapType type) {
+          setState(() {
+            _mapType = type;
+          });
+        },
+      ),
       floatingActionButtonLocation: isLocationLoading
           ? FloatingActionButtonLocation.centerFloat
           : FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
-          onPressed: isLocationLoading ? null : _getCurrentLocation,
-          backgroundColor: Colors.blue,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: isLocationLoading
-              ? const CupertinoActivityIndicator()
-              : const Icon(Icons.my_location)),
+        onPressed: isLocationLoading ? null : _getCurrentLocation,
+        backgroundColor: Colors.blue,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: isLocationLoading
+            ? const CupertinoActivityIndicator()
+            : const Icon(Icons.my_location),
+      ),
     );
   }
 }

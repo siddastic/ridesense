@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:ridesense/model/location_result.dart';
 import 'package:ridesense/screens/map_screen.dart';
 import 'package:ridesense/services/location.dart';
 import 'package:ridesense/widgets/input.dart';
@@ -29,11 +29,16 @@ class _NavigationMiddlewareScreenState
 
   void loadResults() async {
     try {
-      LatLng location = await LocationService.getCoordinates(
-          ModalRoute.of(context)!.settings.arguments as String);
+      var query = ModalRoute.of(context)!.settings.arguments as String;
+      LatLng location = await LocationService.getCoordinates(query);
       await Future.delayed(const Duration(seconds: 2));
-      Navigator.of(context)
-          .pushReplacementNamed(MapScreen.routeName, arguments: location);
+      Navigator.of(context).pushReplacementNamed(
+        MapScreen.routeName,
+        arguments: LocationResult(
+          name: query,
+          location: location,
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Could not find location')),
