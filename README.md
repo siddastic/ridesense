@@ -8,8 +8,15 @@
 
 <img src="https://github.com/user-attachments/assets/dc370b10-d3c3-4762-b9a1-329a76ea561c" alt="Image 4" width="200"/>
 
+# IMPORTANT
+
+This repository depends on Google Maps API key. If you do not have an API key, you can download the pre-built version of the app from the link below:
+
+[![Download App](https://img.shields.io/badge/Download-App%20Release-blue)](https://github.com/siddastic/ridesense/releases/download/v1/app-release.apk)
+
 ## Overview
 This is a simple Flutter app that allows users to input a location (city name, address, or coordinates) and displays it on a Google Map. The app also includes functionality to fetch the user's current location, showing it on the map, and storing recent searches using shared preferences.
+
 
 ## Features
 - **Location Input Screen**: Users can enter a location and validate the input.
