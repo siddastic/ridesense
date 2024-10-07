@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ridesense/screens/location_input.dart';
+import 'package:ridesense/screens/navigation_middleware.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +22,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
       ),
       themeMode: ThemeMode.system,
-      home: LocationInputScreen(),
+      initialRoute: LocationInputScreen.routeName,
+      routes: {
+        LocationInputScreen.routeName: (context) => const LocationInputScreen(),
+        NavigationMiddlewareScreen.routeName: (context) =>
+            const NavigationMiddlewareScreen(),
+      },
     );
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:ridesense/screens/navigation_middleware.dart';
 import 'package:ridesense/widgets/input.dart';
 import 'package:ridesense/widgets/primary_button.dart';
 import 'package:ridesense/widgets/space.dart';
 
 class LocationInputScreen extends StatefulWidget {
+  static const routeName = '/location_input';
   const LocationInputScreen({super.key});
 
   @override
@@ -23,41 +25,40 @@ class _LocationInputScreenState extends State<LocationInputScreen> {
       body: Column(
         children: [
           const Space(100),
-          const Text.rich(
-            TextSpan(
-              text: "Map Explorer",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+          Form(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            key: _formKey,
+            child: Hero(
+              tag: 'location_input',
+              child: Input(
+                controller: locationNameController,
+                autofillHints: const [AutofillHints.addressCityAndState],
+                prefixIcon: const Icon(Icons.location_on),
+                suffixIcon: const Icon(Icons.clear),
+                hint: 'Where do you wanna go?',
+                onChanged: (value) {
+                  if (value.isEmpty) {
+                    setState(() {});
+                  }
+                },
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            child: Hero(
+              tag: 'search_button',
+              child: PrimaryButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamed(NavigationMiddlewareScreen.routeName);
+                },
+                label: 'Go',
               ),
             ),
           ),
           const Spacer(),
-          Form(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            key: _formKey,
-            child: Input(
-              controller: locationNameController,
-              autofillHints: const [AutofillHints.addressCityAndState],
-              prefixIcon: const Icon(Icons.location_on),
-              suffixIcon: const Icon(Icons.clear),
-              hint: 'Where do you wanna go?',
-              onChanged: (value) {
-                if (value.isEmpty) {
-                  setState(() {});
-                }
-              },
-            ),
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.all(16),
-            width: double.infinity,
-            child: PrimaryButton(
-              onPressed: () {},
-              label: 'Search',
-            ),
-          ),
         ],
       ),
     );
