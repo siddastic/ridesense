@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ridesense/screens/map_screen.dart';
+import 'package:ridesense/services/location.dart';
 import 'package:ridesense/widgets/input.dart';
 import 'package:ridesense/widgets/space.dart';
 
@@ -18,12 +21,24 @@ class _NavigationMiddlewareScreenState
     extends State<NavigationMiddlewareScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.of(context).pushReplacementNamed(MapScreen.routeName);
-      });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      loadResults();
     });
     super.initState();
+  }
+
+  void loadResults() async {
+    try {
+      LatLng location = await LocationService.getCoordinates(
+          ModalRoute.of(context)!.settings.arguments as String);
+      await Future.delayed(const Duration(seconds: 2));
+      Navigator.of(context)
+          .pushReplacementNamed(MapScreen.routeName, arguments: location);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not find location')),
+      );
+    }
   }
 
   @override
@@ -38,8 +53,8 @@ class _NavigationMiddlewareScreenState
             width: 200,
             height: 200,
           ),
-          Space(50),
-          Text("Looking for a place like this"),
+          const Space(50),
+          const Text("Looking for a place like this"),
           const Spacer(),
           Hero(
             tag: 'location_input',
