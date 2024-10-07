@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ridesense/screens/location_input.dart';
 import 'package:ridesense/screens/map_screen.dart';
 import 'package:ridesense/screens/navigation_middleware.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 

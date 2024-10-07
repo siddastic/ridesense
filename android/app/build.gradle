@@ -5,6 +5,11 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def dotenv = new File(rootProject.projectDir.parentFile, ".env")
+def env = dotenv.exists() ? dotenv.text.readLines().collectEntries { line ->
+    line.split('=', 2).collect { it.trim() }
+} : [:]
+
 android {
     namespace = "com.example.ridesense"
     compileSdk = flutter.compileSdkVersion
@@ -28,6 +33,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders = [googleApiKey: env['GOOGLE_API_KEY']]
     }
 
     buildTypes {

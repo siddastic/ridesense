@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationService {
-  static const String _googleApiKey =
-      'AIzaSyD_F4JxcGMWb3ujsKrDlNIC37kh4ti6bIs'; // Replace with your Google API key
+  static final String? _googleApiKey = dotenv.env['GOOGLE_API_KEY'];
 
   // Method to get coordinates using Google Geocoding API
   static Future<LatLng> getCoordinates(String location) async {
