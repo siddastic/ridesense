@@ -1,5 +1,13 @@
 # Ridesense
 
+<img src="https://github.com/user-attachments/assets/bd88d643-1ef4-467c-9c54-048a0f466996" alt="Image 1" width="200"/>
+
+<img src="https://github.com/user-attachments/assets/2d965beb-6474-4fe6-ae1b-34bd97645d81" alt="Image 2" width="200"/>
+
+<img src="https://github.com/user-attachments/assets/b4849142-d1ef-4431-aced-77504eb0e688" alt="Image 3" width="200"/>
+
+<img src="https://github.com/user-attachments/assets/dc370b10-d3c3-4762-b9a1-329a76ea561c" alt="Image 4" width="200"/>
+
 ## Overview
 This is a simple Flutter app that allows users to input a location (city name, address, or coordinates) and displays it on a Google Map. The app also includes functionality to fetch the user's current location, showing it on the map, and storing recent searches using shared preferences.
 
