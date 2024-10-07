@@ -35,12 +35,15 @@ class _LocationInputScreenState extends State<LocationInputScreen> {
   }
 
   // Save the current search to recent searches
-  Future<void> _saveSearchQuery(String query) async {
+  Future<void> _saveSearchQuery(String? query) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    recentSearches.insert(0, query); // Add to the beginning of the list
-    if (recentSearches.length > 5) {
-      recentSearches =
-          recentSearches.sublist(0, 5); // Keep only the last 5 queries
+    // else user might be trying to save a modified recent search
+    if (query != null) {
+      recentSearches.insert(0, query); // Add to the beginning of the list
+      if (recentSearches.length > 5) {
+        recentSearches =
+            recentSearches.sublist(0, 5); // Keep only the last 5 queries
+      }
     }
     await prefs.setStringList('recent_searches', recentSearches);
   }
@@ -163,7 +166,7 @@ class _LocationInputScreenState extends State<LocationInputScreen> {
                     setState(() {
                       recentSearches.remove(search);
                     });
-                    _saveSearchQuery(search);
+                    _saveSearchQuery(null);
                   },
                 ),
               ),

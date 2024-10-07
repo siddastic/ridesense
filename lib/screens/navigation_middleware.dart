@@ -41,8 +41,9 @@ class _NavigationMiddlewareScreenState
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not find location$e')),
+        SnackBar(content: Text('Some Error Occurred\n $e')),
       );
+      Navigator.of(context).pop();
     }
   }
 
