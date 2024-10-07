@@ -1,12 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:ridesense/screens/map_screen.dart';
 import 'package:ridesense/widgets/input.dart';
 import 'package:ridesense/widgets/space.dart';
 
-class NavigationMiddlewareScreen extends StatelessWidget {
+class NavigationMiddlewareScreen extends StatefulWidget {
   static const routeName = '/navigation_middleware';
   const NavigationMiddlewareScreen({super.key});
+
+  @override
+  State<NavigationMiddlewareScreen> createState() =>
+      _NavigationMiddlewareScreenState();
+}
+
+class _NavigationMiddlewareScreenState
+    extends State<NavigationMiddlewareScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.of(context).pushReplacementNamed(MapScreen.routeName);
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

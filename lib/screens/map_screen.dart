@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -10,28 +12,31 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+
+  static const CameraPosition _newDelhi = CameraPosition(
+    target: const LatLng(28.6139, 77.2090),
+    zoom: 14.4746,
+  );
   // new delhi
-  LatLng _coordinates = const LatLng(28.6139, 77.2090);
   bool _isLoading = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: _coordinates,
-              zoom: 12,
-            ),
-            markers: {
-              Marker(
-                markerId: MarkerId('location_marker'),
-                position: _coordinates,
-              ),
-            },
+      body: GoogleMap(
+        mapType: MapType.hybrid,
+        initialCameraPosition: _newDelhi,
+        onMapCreated: (GoogleMapController controller) {
+          _controller.complete(controller);
+        },
+        markers: {
+          Marker(
+            markerId: MarkerId('location_marker'),
+            position: _newDelhi.target,
           ),
-        ],
+        },
       ),
     );
   }
