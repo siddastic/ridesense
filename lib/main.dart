@@ -15,14 +15,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Ridesense',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
-        useMaterial3: true,
-      ),
       darkTheme: ThemeData.dark().copyWith(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
       ),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       initialRoute: LocationInputScreen.routeName,
       routes: {
         LocationInputScreen.routeName: (context) => const LocationInputScreen(),

@@ -5,6 +5,7 @@ import 'package:ridesense/widgets/input.dart';
 import 'package:ridesense/widgets/primary_button.dart';
 import 'package:ridesense/widgets/space.dart';
 import 'package:ridesense/widgets/touchable_opacity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationInputScreen extends StatefulWidget {
   static const routeName = '/location_input';
@@ -16,17 +17,56 @@ class LocationInputScreen extends StatefulWidget {
 
 class _LocationInputScreenState extends State<LocationInputScreen> {
   final _formKey = GlobalKey<FormState>();
+  List<String> recentSearches = [];
   TextEditingController locationNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecentSearches(); // Load the recent searches when the screen is loaded
+  }
+
+  // Load recent searches from SharedPreferences
+  Future<void> _loadRecentSearches() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      recentSearches = prefs.getStringList('recent_searches') ?? [];
+    });
+  }
+
+  // Save the current search to recent searches
+  Future<void> _saveSearchQuery(String query) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    recentSearches.insert(0, query); // Add to the beginning of the list
+    if (recentSearches.length > 5) {
+      recentSearches =
+          recentSearches.sublist(0, 5); // Keep only the last 5 queries
+    }
+    await prefs.setStringList('recent_searches', recentSearches);
+  }
+
+  // Clear all recent searches
+  Future<void> _clearRecentSearches() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('recent_searches');
+    setState(() {
+      recentSearches.clear();
+    });
+  }
 
   void unfocus() {
     FocusScope.of(context).unfocus();
   }
 
-  void submit() {
-    unfocus();
+  void submit() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.of(context).pushNamed(NavigationMiddlewareScreen.routeName,
+      _saveSearchQuery(
+          locationNameController.text); // Save the current search query
+      await Navigator.of(context).pushNamed(
+          NavigationMiddlewareScreen.routeName,
           arguments: locationNameController.text);
+      unfocus();
+      locationNameController.clear();
     }
   }
 
@@ -37,7 +77,8 @@ class _LocationInputScreenState extends State<LocationInputScreen> {
         title: const Text('RideSense'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Column(
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         children: [
           const Space(100),
           Form(
@@ -84,7 +125,49 @@ class _LocationInputScreenState extends State<LocationInputScreen> {
               ),
             ),
           ),
-          const Spacer(),
+          const Space(20),
+          if (recentSearches.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Recent Searches',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  TextButton(
+                    onPressed: _clearRecentSearches,
+                    child: const Text('Clear Recent'),
+                  ),
+                ],
+              ),
+            ),
+            for (var search in recentSearches)
+              ListTile(
+                leading: const Icon(Icons.history),
+                title: Text(
+                  search,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                onTap: () {
+                  locationNameController.text = search;
+                  submit();
+                },
+                trailing: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    setState(() {
+                      recentSearches.remove(search);
+                    });
+                    _saveSearchQuery(search);
+                  },
+                ),
+              ),
+          ],
         ],
       ),
     );

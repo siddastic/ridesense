@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ridesense/model/location_result.dart';
@@ -26,7 +25,6 @@ class _MapScreenState extends State<MapScreen> {
     zoom: 14.4746,
   );
 
-  LatLng? _currentUserLocation;
   final Set<Marker> _markers = {};
   bool isLocationLoading = false;
   MapType _mapType = MapType.normal;

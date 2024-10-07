@@ -1,11 +1,38 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geocoding/geocoding.dart';
 
 class LocationService {
+  static const String _googleApiKey =
+      'AIzaSyD_F4JxcGMWb3ujsKrDlNIC37kh4ti6bIs'; // Replace with your Google API key
+
+  // Method to get coordinates using Google Geocoding API
   static Future<LatLng> getCoordinates(String location) async {
-    List<Location> locations = await locationFromAddress(location);
-    return LatLng(locations[0].latitude, locations[0].longitude);
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?address=$location&key=$_googleApiKey';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK') {
+          final lat = data['results'][0]['geometry']['location']['lat'];
+          final lng = data['results'][0]['geometry']['location']['lng'];
+          return LatLng(lat, lng);
+        } else {
+          throw Exception('Error: ${data['status']}');
+        }
+      } else {
+        throw Exception('Failed to fetch coordinates');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to Google Geocoding API: $e');
+    }
   }
 
   static Future<Position> determinePosition() async {
