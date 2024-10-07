@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ridesense/screens/location_input.dart';
+import 'package:ridesense/screens/map_screen.dart';
 import 'package:ridesense/screens/navigation_middleware.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Ridesense',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
         useMaterial3: true,
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         LocationInputScreen.routeName: (context) => const LocationInputScreen(),
         NavigationMiddlewareScreen.routeName: (context) =>
             const NavigationMiddlewareScreen(),
+        MapScreen.routeName: (context) => const MapScreen(),
       },
     );
   }

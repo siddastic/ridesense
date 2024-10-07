@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:master_validator/master_validator.dart';
+import 'package:ridesense/helpers/validators.dart';
 import 'package:ridesense/screens/navigation_middleware.dart';
 import 'package:ridesense/widgets/input.dart';
 import 'package:ridesense/widgets/primary_button.dart';
