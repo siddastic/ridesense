@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ridesense/widgets/input.dart';
+import 'package:ridesense/screens/location_input.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,11 +14,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
         useMaterial3: true,
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData.dark().copyWith(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
+      ),
       themeMode: ThemeMode.system,
+      home: LocationInputScreen(),
     );
   }
 }

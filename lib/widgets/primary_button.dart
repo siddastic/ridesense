@@ -20,7 +20,7 @@ class PrimaryButton extends StatelessWidget {
         enableFeedback: true,
         backgroundColor: inverted
             ? const Color(0xff2a2a2b)
-            : Theme.of(context).colorScheme.primary,
+            : Theme.of(context).colorScheme.inversePrimary,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -28,7 +28,7 @@ class PrimaryButton extends StatelessWidget {
       ),
       onPressed: onPressed,
       label: Image.asset(
-        "assets/images/walkthrough/arrow-right.png",
+        "assets/icons/arrow-right.png",
         height: 24,
         width: 24,
         color: inverted ? Theme.of(context).colorScheme.primary : Colors.black,
